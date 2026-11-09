@@ -30,6 +30,9 @@ class HistChart extends Chart {
     const centers = j => g.px(d.min + (j + .5) * g.bw);
     // colour ramps with the step: the first (oldest) histogram is pale, the newest is fully saturated
     const shade = i => mixHex(this.color, T.card, .8 * (1 - (N > 1 ? i / (N - 1) : 1)));
+    // offset mode: oldest histogram at the top, newest at the bottom (as in Tensorboard); each baseline is `sp` below the previous
+    const hh = N > 1 ? Math.min(g.ph * .6, Math.max(20, g.ph * .35)) : g.ph, sp = N > 1 ? (g.ph - hh) / (N - 1) : 0;
+    const base = i => g.T + hh + i * sp;
     this.sp = sp; this.hh = hh; this.g = g;
     const hov = this.hover = this.mouse ? this.pick(off, g, N) : null;
     if (off) {
