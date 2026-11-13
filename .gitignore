@@ -13,6 +13,20 @@ dist/
 *.egg-info/
 .eggs/
 wheels/
+*pypimgr_cache/
+.cache/
+.logs/
+
+# Secrets
+.env
+.env.*
+!.env.example
+!.env.release.example
+.pypirc
+*.pem
+*.key
+*.token
+secrets/
 
 # Environments
 .venv/
@@ -26,6 +40,7 @@ env/
 Thumbs.db
 *.zip
 *commit.txt
+*.diff
 
 # Runlytics data
 runs/

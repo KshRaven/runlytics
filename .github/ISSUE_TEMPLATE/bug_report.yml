@@ -1,0 +1,38 @@
+name: Bug report
+description: Something in Runlytics is broken or wrong
+labels: [bug]
+body:
+  - type: textarea
+    id: what
+    attributes:
+      label: What happened?
+      description: What you did, what you expected and what you got. A short snippet that reproduces it helps most.
+    validations:
+      required: true
+  - type: input
+    id: version
+    attributes:
+      label: Runlytics version
+      description: Output of `runlytics --version` or `pip show runlytics`.
+    validations:
+      required: true
+  - type: input
+    id: python
+    attributes:
+      label: Python and operating system
+      description: For example Python 3.12 on Ubuntu 24.04.
+    validations:
+      required: true
+  - type: dropdown
+    id: area
+    attributes:
+      label: Where does it happen?
+      options: [Dashboard (browser), SummaryWriter, CLI / server, Install / packaging, Other]
+  - type: textarea
+    id: logs
+    attributes:
+      label: Output or browser console errors
+      render: text
+  - type: markdown
+    attributes:
+      value: Please remove private data from logs before pasting them.

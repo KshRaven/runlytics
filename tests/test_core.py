@@ -1,6 +1,16 @@
-from runlytics.core import (CorruptRecord, decode_event, encode_event, frame_record, histogram_value, masked_crc,
-                            parse_records, scalar_value, summary)
 import pytest
+
+from runlytics.core import (
+    CorruptRecord,
+    decode_event,
+    encode_event,
+    frame_record,
+    histogram_value,
+    masked_crc,
+    parse_records,
+    scalar_value,
+    summary,
+)
 
 
 def test_crc_is_deterministic_and_masked():

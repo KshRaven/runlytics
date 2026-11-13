@@ -15,7 +15,7 @@ from ..core import encode_event, frame_record
 __all__ = ["EventFileWriter"]
 
 _FLUSH, _CLOSE = object(), object()
-_OPEN: "weakref.WeakSet[EventFileWriter]" = weakref.WeakSet()
+_OPEN: weakref.WeakSet[EventFileWriter] = weakref.WeakSet()
 _uid = 0
 _uid_lock = threading.Lock()
 

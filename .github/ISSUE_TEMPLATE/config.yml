@@ -1,0 +1,8 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Usage help
+    url: https://github.com/KshRaven/runlytics#readme
+    about: Install steps, the SummaryWriter API and CLI options are in the README.
+  - name: Security problem
+    url: https://github.com/KshRaven/runlytics/security/advisories/new
+    about: Report vulnerabilities privately, not in a public issue.
