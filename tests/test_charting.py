@@ -1,6 +1,6 @@
 import pytest
 
-from runlytics.charting import lttb, make_histogram, rebin, tensor_to_histo
+from runlytics.charting import lttb, make_histogram
 from runlytics.charting.image import encode_png, make_grid, to_nhwc, to_uint8
 
 

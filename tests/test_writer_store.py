@@ -1,5 +1,4 @@
 import json
-import os
 
 import pytest
 
@@ -129,9 +128,17 @@ def test_release_frees_runs_and_reloads_lazily(store):
 
 def test_foreign_payloads_never_break_tags(tmp_path):
     """Non-JSON structured payloads (as other tools write them) are skipped; the rest of the run still loads."""
-    from runlytics.core import (DT_FLOAT, encode_event, encode_float_tensor, encode_string_tensor, frame_record,
-                                metadata, summary, tensor_value)
     import struct
+
+    from runlytics.core import (
+        encode_event,
+        encode_float_tensor,
+        encode_string_tensor,
+        frame_record,
+        metadata,
+        summary,
+        tensor_value,
+    )
     d = tmp_path / "foreign"
     d.mkdir()
     ev = lambda step, val: frame_record(encode_event(1.0, step, summary=summary(val)))  # noqa: E731

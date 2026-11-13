@@ -1,0 +1,132 @@
+name: Release
+
+# Runs when a version tag is pushed (python scripts/pypimgr/pypimgr.py release --push does this for you).
+# It re-checks and builds, creates the GitHub release, then publishes to TestPyPI and PyPI
+# using configured Trusted Publishers (GitHub OIDC; no long-lived API tokens).
+
+on:
+  push:
+    tags: ["v*"]
+
+permissions:
+  contents: read
+
+env:
+  CI: "true"
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+      - run: |
+          git config --global user.name ci
+          git config --global user.email ci@example.com
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Tag must match the package version
+        run: |
+          v=$(python -c "import re,pathlib;print(re.search(r'__version__\s*=\s*\"([^\"]+)\"', pathlib.Path('runlytics/_version.py').read_text()).group(1))")
+          if [ "refs/tags/v$v" != "$GITHUB_REF" ]; then
+            echo "Tag $GITHUB_REF does not match package version v$v" >&2
+            exit 1
+          fi
+      - run: pip install -e ".[dev]" build twine
+      - run: ruff check .
+      - run: pytest -q
+      - run: python scripts/pypimgr/pypimgr.py build
+        env:
+          PYPIMGR_NO_VENV: "1"
+      - name: Release notes from CHANGELOG.md
+        run: python scripts/pypimgr/pypimgr.py notes "${GITHUB_REF_NAME}" > notes.md
+      - name: Collect artifacts
+        run: mkdir -p dist && cp .cache/pypimgr/runlytics/artifacts/* dist/
+      - uses: softprops/action-gh-release@v2
+        with:
+          files: dist/*
+          body_path: notes.md
+      - uses: actions/upload-artifact@v4
+        with:
+          name: release-dist
+          path: dist/*
+          if-no-files-found: error
+
+  publish-testpypi:
+    name: Publish to TestPyPI
+    needs: release
+    runs-on: ubuntu-latest
+    environment:
+      name: testpypi
+      url: https://test.pypi.org/p/runlytics
+    permissions:
+      id-token: write
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          name: release-dist
+          path: dist
+      - name: Check whether this version is already on TestPyPI
+        id: existing
+        run: |
+          version="${GITHUB_REF_NAME#v}"
+          status="$(curl --silent --show-error --output /dev/null --write-out '%{http_code}' \
+            "https://test.pypi.org/pypi/runlytics/${version}/json")"
+          case "$status" in
+            200)
+              echo "exists=true" >> "$GITHUB_OUTPUT"
+              echo "runlytics ${version} is already on TestPyPI; skipping upload."
+              ;;
+            404)
+              echo "exists=false" >> "$GITHUB_OUTPUT"
+              ;;
+            *)
+              echo "Could not check TestPyPI (HTTP ${status})." >&2
+              exit 1
+              ;;
+          esac
+      - name: Upload distributions to TestPyPI
+        if: steps.existing.outputs.exists == 'false'
+        uses: pypa/gh-action-pypi-publish@release/v1
+        with:
+          repository-url: https://test.pypi.org/legacy/
+
+  publish:
+    name: Publish to PyPI
+    needs: [release, publish-testpypi]
+    runs-on: ubuntu-latest
+    environment:
+      name: pypi
+      url: https://pypi.org/p/runlytics
+    permissions:
+      id-token: write
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          name: release-dist
+          path: dist
+      - name: Check whether this version is already on PyPI
+        id: existing
+        run: |
+          version="${GITHUB_REF_NAME#v}"
+          status="$(curl --silent --show-error --output /dev/null --write-out '%{http_code}' \
+            "https://pypi.org/pypi/runlytics/${version}/json")"
+          case "$status" in
+            200)
+              echo "exists=true" >> "$GITHUB_OUTPUT"
+              echo "runlytics ${version} is already on PyPI; skipping upload."
+              ;;
+            404)
+              echo "exists=false" >> "$GITHUB_OUTPUT"
+              ;;
+            *)
+              echo "Could not check PyPI (HTTP ${status})." >&2
+              exit 1
+              ;;
+          esac
+      - name: Upload distributions to PyPI
+        if: steps.existing.outputs.exists == 'false'
+        uses: pypa/gh-action-pypi-publish@release/v1

@@ -7,8 +7,11 @@ import struct
 import time
 
 from ..charting.histogram import make_histogram
-from ..core import (DT_DOUBLE, DT_FLOAT, encode_event, encode_float_tensor, histogram_value, metadata, scalar_value,
-                    summary, tensor_value)
+from ..core import (
+    DT_DOUBLE, DT_FLOAT, 
+    encode_event, encode_float_tensor, histogram_value, metadata, 
+    scalar_value, summary, tensor_value
+)
 from ..utils.arrays import to_float
 from .file_writer import EventFileWriter
 from .media import MediaMixin

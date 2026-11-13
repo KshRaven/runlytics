@@ -1,5 +1,5 @@
 [build-system]
-requires = ["setuptools>=61"]
+requires = ["setuptools>=77.0.3"]
 build-backend = "setuptools.build_meta"
 
 [project]
@@ -7,21 +7,20 @@ name = "runlytics"
 dynamic = ["version"]
 description = "A fast, lazy, modern experiment dashboard and SummaryWriter."
 readme = "README.md"
-requires-python = ">=3.9"
-license = { text = "MIT" }
+requires-python = ">=3.10"
+license = "MIT"
 authors = [{ name = "Bradley Odimmasi" }]
 keywords = ["machine-learning", "experiment-tracking", "visualization", "dashboard", "logging"]
 classifiers = [
     "Development Status :: 4 - Beta",
     "Intended Audience :: Developers",
     "Intended Audience :: Science/Research",
-    "License :: OSI Approved :: MIT License",
     "Programming Language :: Python :: 3",
-    "Programming Language :: Python :: 3.9",
     "Programming Language :: Python :: 3.10",
     "Programming Language :: Python :: 3.11",
     "Programming Language :: Python :: 3.12",
     "Programming Language :: Python :: 3.13",
+    "Programming Language :: Python :: 3.14",
     "Topic :: Scientific/Engineering :: Visualization",
     "Typing :: Typed",
 ]
@@ -31,6 +30,13 @@ dependencies = []
 fast = ["numpy", "google-crc32c"]
 media = ["numpy", "Pillow", "matplotlib"]
 dev = ["pytest", "ruff", "numpy"]
+
+[project.urls]
+Homepage = "https://github.com/KshRaven/runlytics"
+Documentation = "https://github.com/KshRaven/runlytics#readme"
+Source = "https://github.com/KshRaven/runlytics"
+Issues = "https://github.com/KshRaven/runlytics/issues"
+Changelog = "https://github.com/KshRaven/runlytics/blob/main/CHANGELOG.md"
 
 [project.scripts]
 runlytics = "runlytics.cli:main"
@@ -49,8 +55,8 @@ testpaths = ["tests"]
 
 [tool.ruff]
 line-length = 120
-target-version = "py39"
+target-version = "py310"
 
 [tool.ruff.lint]
 select = ["E", "F", "I", "UP"]
-ignore = ["E501", "E701", "E702", "E731", "UP007", "UP035"]
+ignore = ["E501", "E701", "E702", "E731", "UP007", "UP031", "UP035", "UP045", "I001"]
